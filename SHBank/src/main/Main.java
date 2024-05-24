@@ -1,3 +1,5 @@
+// 1.1.2 Creation of main class for tests
+
 package main;
 
 import java.util.ArrayList;
@@ -9,10 +11,8 @@ import components.Client;
 public class Main {
 
 	public static void main(String[] args) {
-//		List<Client> clients = new ArrayList<Client>();
-		List<Client> clients;
 
-		clients = generateClients(3);
+		List<Client> clients = generateClients(3);
 
 		displayClients(clients);
 
