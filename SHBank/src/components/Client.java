@@ -4,25 +4,25 @@ package components;
 
 public class Client {
 
-	private String Name;
+	private String name;
 	private String firstName;
 	private int clientNumber;
 
 	private static int numberOfClients = 0;
 
 	public Client(String clientName, String clientFName) {
-		Name = clientName;
+		name = clientName;
 		firstName = clientFName;
 
 		clientNumber = ++numberOfClients;
 	}
 
 	public String getName() {
-		return Name;
+		return name;
 	}
 
 	public void setName(String name) {
-		Name = name;
+		this.name = name;
 	}
 
 	public String getFirstName() {
@@ -44,7 +44,7 @@ public class Client {
 	// toString() method
 	@Override
 	public String toString() {
-		return "Client{" + "clientNumber=" + clientNumber + ", firstName='" + firstName + '\'' + ", Name='" + Name
+		return "Client{" + "clientNumber=" + clientNumber + ", firstName='" + firstName + '\'' + ", Name='" + name
 				+ '\'' + '}';
 	}
 }
