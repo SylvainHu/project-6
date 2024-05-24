@@ -38,6 +38,11 @@ public class Client {
 		return clientNumber;
 	}
 
+//	Unnecessary as this attribute is auto-incremented
+	public void setClientNumber(int clientNumber) {
+		this.clientNumber = clientNumber;
+	}
+
 	// toString() method
 	@Override
 	public String toString() {
