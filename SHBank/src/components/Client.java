@@ -10,9 +10,10 @@ public class Client {
 
 	private static int numberOfClients = 0;
 
-	public Client(String clientName, String clientFName) {
-		name = clientName;
-		firstName = clientFName;
+	public Client(String firstName, String name) {
+
+		this.firstName = firstName;
+		this.name = name;
 
 		clientNumber = ++numberOfClients;
 	}
@@ -35,10 +36,6 @@ public class Client {
 
 	public int getClientNumber() {
 		return clientNumber;
-	}
-
-	public void setClientNumber(int clientNumber) {
-		this.clientNumber = clientNumber;
 	}
 
 	// toString() method
