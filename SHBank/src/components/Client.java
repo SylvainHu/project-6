@@ -1,4 +1,4 @@
-//1.1.1 Creation of the client class
+// 1.1.1 Creation of the client class
 
 package components;
 
@@ -44,7 +44,7 @@ public class Client {
 	// toString() method
 	@Override
 	public String toString() {
-		return "Client{" + "clientNumber=" + clientNumber + ", firstName='" + firstName + '\'' + ", Name='" + name
-				+ '\'' + '}';
+		return "Client number " + clientNumber + " is " + firstName + " " + name;
 	}
+
 }
