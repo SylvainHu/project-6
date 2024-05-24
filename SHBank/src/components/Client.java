@@ -10,10 +10,10 @@ public class Client {
 
 	private static int numberOfClients = 0;
 
-	public Client(String firstName, String name) {
+	public Client(String name, String firstName) {
 
-		this.firstName = firstName;
 		this.name = name;
+		this.firstName = firstName;
 
 		clientNumber = ++numberOfClients;
 	}
