@@ -41,7 +41,7 @@ public class Client {
 		this.clientNumber = clientNumber;
 	}
 
-	// toString() method s
+	// toString() method
 	@Override
 	public String toString() {
 		return "Client{" + "clientNumber=" + clientNumber + ", firstName='" + firstName + '\'' + ", Name='" + Name
