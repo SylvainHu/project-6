@@ -2,13 +2,13 @@
 
 package components;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Transfert extends Flow {
 
 	private int issuingAccountNumber;
 
-	public Transfert(String comment, double amount, int targetAccountNumber, boolean effect, Date dateOfFlow,
+	public Transfert(String comment, double amount, int targetAccountNumber, boolean effect, LocalDate dateOfFlow,
 			int issuingAccountNumber) {
 		super(comment, amount, targetAccountNumber, effect, dateOfFlow);
 		this.issuingAccountNumber = issuingAccountNumber;

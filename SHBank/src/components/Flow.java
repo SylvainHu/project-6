@@ -2,7 +2,7 @@
 
 package components;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public abstract class Flow {
 
@@ -11,11 +11,11 @@ public abstract class Flow {
 	private double amount;
 	private int targetAccountNumber;
 	private boolean effect;
-	private Date dateOfFlow;
+	private LocalDate dateOfFlow;
 
 	private static int numberOfFlows = 0;
 
-	public Flow(String comment, double amount, int targetAccountNumber, boolean effect, Date dateOfFlow) {
+	public Flow(String comment, double amount, int targetAccountNumber, boolean effect, LocalDate dateOfFlow) {
 		this.comment = comment;
 		this.identifier = ++numberOfFlows;
 		this.amount = amount;
@@ -64,11 +64,11 @@ public abstract class Flow {
 		this.effect = effect;
 	}
 
-	public Date getDateOfFlow() {
+	public LocalDate getDateOfFlow() {
 		return dateOfFlow;
 	}
 
-	public void setDateOfFlow(Date dateOfFlow) {
+	public void setDateOfFlow(LocalDate dateOfFlow) {
 		this.dateOfFlow = dateOfFlow;
 	}
 
