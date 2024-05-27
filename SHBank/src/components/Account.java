@@ -14,8 +14,8 @@ public abstract class Account {
 	public Account(String label, Client client) {
 		this.label = label;
 		this.client = client;
-		this.accountNumber = ++numberOfAccounts;
 		this.balance = 0.0;
+		this.accountNumber = ++numberOfAccounts;
 	}
 
 	public String getLabel() {
@@ -30,8 +30,8 @@ public abstract class Account {
 		return balance;
 	}
 
-	public void setBalance(double amount) {
-		this.balance = amount;
+	public void setBalance(Flow flow) {
+		this.balance = flow.getAmount();
 	}
 
 	public int getAccountNumber() {
