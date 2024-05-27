@@ -1,9 +1,11 @@
 // 1.1.2 Creation of main class for tests
 // 1.2.3 Creation of the tablea account
 // 1.3.1 Adaptation of the table of accounts
+// 1.3.4 Creation of the flow array
 
 package main;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -11,8 +13,12 @@ import java.util.stream.Collectors;
 
 import components.Account;
 import components.Client;
+import components.Credit;
 import components.CurrentAccount;
+import components.Debit;
+import components.Flow;
 import components.SavingsAccount;
+import components.Transfert;
 
 public class Main {
 
@@ -22,10 +28,12 @@ public class Main {
 		displayClients(clients);
 
 		List<Account> accounts = generateAccounts(clients);
-//		displayAccounts(accounts);
+		displayAccounts(accounts);
 
 		Hashtable<Integer, Account> accountTable = createAccountTable(accounts);
 		displayAccountTable(accountTable);
+
+		List<Flow> flows = loadFlows(accounts);
 	}
 
 	public static List<Client> generateClients(int numberOfClients) {
@@ -86,5 +94,29 @@ public class Main {
 					: Integer.compare(a1.getAccountNumber(), a2.getAccountNumber());
 		}).map(Account::toString).collect(Collectors.joining("\n"));
 		System.out.println(tableDetails);
+	}
+
+//	1.3.4 Creation of the flow array
+	public static List<Flow> loadFlows(List<Account> accounts) {
+		List<Flow> flows = new ArrayList<>();
+
+		flows.add(new Debit("Debit of 50€", 50, accounts.get(0).getAccountNumber(), true, LocalDate.now().plusDays(2)));
+
+		for (Account account : accounts) {
+			if (account instanceof CurrentAccount) {
+				flows.add(new Credit("Credit of 100.50€", 100.50, account.getAccountNumber(), true,
+						LocalDate.now().plusDays(2)));
+			}
+
+			if (account instanceof SavingsAccount) {
+				flows.add(new Credit("Credit of 1500€", 1500, account.getAccountNumber(), true,
+						LocalDate.now().plusDays(2)));
+			}
+		}
+
+		flows.add(new Transfert("Transfer of 50€", 50, accounts.get(0).getAccountNumber(), true,
+				LocalDate.now().plusDays(2), accounts.get(1).getAccountNumber()));
+
+		return flows;
 	}
 }
