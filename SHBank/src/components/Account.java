@@ -30,8 +30,22 @@ public abstract class Account {
 		return balance;
 	}
 
+//	1.3.2 Creation of the Flow class
+//	1.3.5 Updating accounts
 	public void setBalance(Flow flow) {
-		this.balance = flow.getAmount();
+		if (flow instanceof Credit) {
+			this.balance += flow.getAmount();
+		} else if (flow instanceof Debit) {
+			this.balance -= flow.getAmount();
+		} else if (flow instanceof Transfert) {
+			Transfert transfer = (Transfert) flow;
+			if (this.accountNumber == transfer.getTargetAccountNumber()) {
+				this.balance += transfer.getAmount();
+			}
+			if (this.accountNumber == transfer.getIssuingAccountNumber()) {
+				this.balance -= transfer.getAmount();
+			}
+		}
 	}
 
 	public int getAccountNumber() {

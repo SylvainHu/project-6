@@ -2,6 +2,7 @@
 // 1.2.3 Creation of the tablea account
 // 1.3.1 Adaptation of the table of accounts
 // 1.3.4 Creation of the flow array
+// 1.3.5 Updating accounts
 
 package main;
 
@@ -9,6 +10,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import components.Account;
@@ -34,6 +37,9 @@ public class Main {
 		displayAccountTable(accountTable);
 
 		List<Flow> flows = loadFlows(accounts);
+		updateBalances(flows, accountTable);
+		displayAccountTable(accountTable);
+
 	}
 
 	public static List<Client> generateClients(int numberOfClients) {
@@ -50,7 +56,7 @@ public class Main {
 	public static void displayClients(List<Client> clients) {
 
 		String clientDetails = clients.stream().map(Client::toString).collect(Collectors.joining("\n"));
-		System.out.println(clientDetails);
+		System.out.println(clientDetails + "\n");
 	}
 
 	// 1.2.3 Creation of the tablea account
@@ -69,7 +75,7 @@ public class Main {
 	public static void displayAccounts(List<Account> accounts) {
 
 		String accountDetails = accounts.stream().map(Account::toString).collect(Collectors.joining("\n"));
-		System.out.println(accountDetails);
+		System.out.println(accountDetails + "\n");
 	}
 
 	// 1.3.1 Adaptation of the table of accounts
@@ -84,16 +90,12 @@ public class Main {
 	}
 
 	public static void displayAccountTable(Hashtable<Integer, Account> accountTable) {
-//		String tableDetails = accountTable.values().stream()
-//				.sorted((a1, a2) -> Double.compare(a1.getBalance(), a2.getBalance())).map(Account::toString)
-//				.collect(Collectors.joining("\n"));
-
 		String tableDetails = accountTable.values().stream().sorted((a1, a2) -> {
 			int balanceComparison = Double.compare(a1.getBalance(), a2.getBalance());
 			return balanceComparison != 0 ? balanceComparison
 					: Integer.compare(a1.getAccountNumber(), a2.getAccountNumber());
 		}).map(Account::toString).collect(Collectors.joining("\n"));
-		System.out.println(tableDetails);
+		System.out.println(tableDetails + "\n");
 	}
 
 //	1.3.4 Creation of the flow array
@@ -114,9 +116,27 @@ public class Main {
 			}
 		}
 
-		flows.add(new Transfert("Transfer of 50€", 50, accounts.get(0).getAccountNumber(), true,
-				LocalDate.now().plusDays(2), accounts.get(1).getAccountNumber()));
+		flows.add(new Transfert("Transfer of 50€", 50, accounts.get(1).getAccountNumber(), true,
+				LocalDate.now().plusDays(2), accounts.get(0).getAccountNumber()));
 
 		return flows;
+	}
+
+	// 1.3.5 Updating accounts
+	public static void updateBalances(List<Flow> flows, Map<Integer, Account> accountTable) {
+		for (Flow flow : flows) {
+			Account targetAccount = accountTable.get(flow.getTargetAccountNumber());
+			targetAccount.setBalance(flow);
+
+			if (flow instanceof Transfert) {
+				Transfert transfer = (Transfert) flow;
+				Account issuingAccount = accountTable.get(transfer.getIssuingAccountNumber());
+				issuingAccount.setBalance(flow);
+			}
+		}
+
+		Optional<Account> negativeBalanceAccount = accountTable.values().stream()
+				.filter(account -> account.getBalance() < 0).findAny();
+		negativeBalanceAccount.ifPresent(account -> System.out.println("Account with negative balance: " + account));
 	}
 }
