@@ -47,7 +47,7 @@ public class Main {
 
 //		List<Flow> flows = loadFlows(accounts);
 
-		List<Flow> flows = loadFlowsFromJson("src/flows.json");
+		List<Flow> flows = loadFlowsFromJson("src/data/flows.json");
 
 		updateBalances(flows, accountTable);
 		displayAccountTable(accountTable);
