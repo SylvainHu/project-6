@@ -62,6 +62,7 @@ public class Main {
 		displayAccountTable(accountTable);
 
 		// Loading data files
+		System.out.println("Loaded accounts: ");
 		List<Account> loadedAccounts = loadAccountsFromXML("src/data/accounts.xml");
 		Hashtable<Integer, Account> loadedAccountTable = createAccountTable(loadedAccounts);
 		List<Flow> loadedFlows = loadFlowsFromJson("src/data/flows.json");
@@ -73,7 +74,6 @@ public class Main {
 	public static List<Client> generateClients(int numberOfClients) {
 
 		List<Client> clients = new ArrayList<>();
-
 		for (int i = 1; i <= numberOfClients; i++) {
 			clients.add(new Client("name" + i, "firstname" + i));
 		}
@@ -83,6 +83,7 @@ public class Main {
 
 	public static void displayClients(List<Client> clients) {
 
+		System.out.println("Clients List: ");
 		String clientDetails = clients.stream().map(Client::toString).collect(Collectors.joining("\n"));
 		System.out.println(clientDetails + "\n");
 	}
@@ -102,6 +103,7 @@ public class Main {
 
 	public static void displayAccounts(List<Account> accounts) {
 
+		System.out.println("Accounts List: ");
 		String accountDetails = accounts.stream().map(Account::toString).collect(Collectors.joining("\n"));
 		System.out.println(accountDetails + "\n");
 	}
@@ -119,6 +121,8 @@ public class Main {
 
 	// Sorted by balance ascending order and then by account number
 	public static void displayAccountTable(Hashtable<Integer, Account> accountTable) {
+
+		System.out.println("Sorted accounts List: ");
 		String tableDetails = accountTable.values().stream().sorted((a1, a2) -> {
 			int balanceComparison = Double.compare(a1.getBalance(), a2.getBalance());
 			return balanceComparison != 0 ? balanceComparison
