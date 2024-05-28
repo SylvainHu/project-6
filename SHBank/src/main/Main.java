@@ -9,7 +9,6 @@ package main;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -178,6 +177,7 @@ public class Main {
 		List<Flow> flows = new ArrayList<>();
 		JSONParser parser = new JSONParser();
 		Path path = Paths.get(filePath);
+
 		try (FileReader reader = new FileReader(path.toFile())) {
 			Object obj = parser.parse(reader);
 			JSONArray jsonArray = (JSONArray) obj;
@@ -208,45 +208,35 @@ public class Main {
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 		}
+
 		return flows;
 	}
 
 	// 2.2 XML file of account
 	public static List<Account> loadAccountsFromXML(String filePath) {
 		List<Account> accounts = new ArrayList<>();
-
-		// Create a Path object
 		Path path = Paths.get(filePath);
 
 		try {
-			// Read XML content into a byte array
-			byte[] bytes = Files.readAllBytes(path);
-			String xmlContent = new String(bytes);
 
-			// Parse XML content
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document doc = builder.parse(path.toFile());
 
-			// Get the root element
 			Element root = doc.getDocumentElement();
 
-			// Get all account nodes
 			NodeList accountNodes = root.getElementsByTagName("account");
 
-			// Iterate over account nodes
 			for (int i = 0; i < accountNodes.getLength(); i++) {
 				Node node = accountNodes.item(i);
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
 					Element element = (Element) node;
-					// Extract data from XML and create Account objects
 					String label = element.getAttribute("label");
 					int accountNumber = Integer.parseInt(element.getAttribute("accountNumber"));
 					String clientName = element.getAttribute("clientName");
 					String clientFirstName = element.getAttribute("clientFirstName");
 					Client client = new Client(clientName, clientFirstName);
 
-					// Create Account object based on type
 					String accountType = element.getAttribute("type");
 					Account account;
 					if (accountType.equals("Savings")) {
@@ -255,10 +245,8 @@ public class Main {
 						account = new CurrentAccount(label, client);
 					}
 
-					// Set additional attributes
 					account.setAccountNumber(accountNumber);
 
-					// Add account to the list
 					accounts.add(account);
 				}
 			}
