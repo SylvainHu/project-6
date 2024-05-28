@@ -3,11 +3,13 @@
 // 1.3.1 Adaptation of the table of accounts
 // 1.3.4 Creation of the flow array
 // 1.3.5 Updating accounts
+// 2.1 JSON file of flows
 
 package main;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -18,10 +20,19 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import components.Account;
 import components.Client;
@@ -36,6 +47,7 @@ public class Main {
 
 	public static void main(String[] args) {
 
+		// 1.1.2 Creation of main class for tests
 		List<Client> clients = generateClients(3);
 		displayClients(clients);
 
@@ -45,14 +57,19 @@ public class Main {
 		Hashtable<Integer, Account> accountTable = createAccountTable(accounts);
 		displayAccountTable(accountTable);
 
-//		List<Flow> flows = loadFlows(accounts);
-
-		List<Flow> flows = loadFlowsFromJson("src/data/flows.json");
-
+		List<Flow> flows = loadFlows(accounts);
 		updateBalances(flows, accountTable);
 		displayAccountTable(accountTable);
+
+		// Loading data files
+		List<Account> loadedAccounts = loadAccountsFromXML("src/data/accounts.xml");
+		Hashtable<Integer, Account> loadedAccountTable = createAccountTable(loadedAccounts);
+		List<Flow> loadedFlows = loadFlowsFromJson("src/data/flows.json");
+		updateBalances(loadedFlows, loadedAccountTable);
+		displayAccountTable(loadedAccountTable);
 	}
 
+	// 1.1.2 Creation of main class for tests
 	public static List<Client> generateClients(int numberOfClients) {
 
 		List<Client> clients = new ArrayList<>();
@@ -100,6 +117,7 @@ public class Main {
 		return accountTable;
 	}
 
+	// Sorted by balance ascending order and then by account number
 	public static void displayAccountTable(Hashtable<Integer, Account> accountTable) {
 		String tableDetails = accountTable.values().stream().sorted((a1, a2) -> {
 			int balanceComparison = Double.compare(a1.getBalance(), a2.getBalance());
@@ -189,4 +207,61 @@ public class Main {
 		return flows;
 	}
 
+	// 2.2 XML file of account
+	public static List<Account> loadAccountsFromXML(String filePath) {
+		List<Account> accounts = new ArrayList<>();
+
+		// Create a Path object
+		Path path = Paths.get(filePath);
+
+		try {
+			// Read XML content into a byte array
+			byte[] bytes = Files.readAllBytes(path);
+			String xmlContent = new String(bytes);
+
+			// Parse XML content
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc = builder.parse(path.toFile());
+
+			// Get the root element
+			Element root = doc.getDocumentElement();
+
+			// Get all account nodes
+			NodeList accountNodes = root.getElementsByTagName("account");
+
+			// Iterate over account nodes
+			for (int i = 0; i < accountNodes.getLength(); i++) {
+				Node node = accountNodes.item(i);
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element element = (Element) node;
+					// Extract data from XML and create Account objects
+					String label = element.getAttribute("label");
+					int accountNumber = Integer.parseInt(element.getAttribute("accountNumber"));
+					String clientName = element.getAttribute("clientName");
+					String clientFirstName = element.getAttribute("clientFirstName");
+					Client client = new Client(clientName, clientFirstName);
+
+					// Create Account object based on type
+					String accountType = element.getAttribute("type");
+					Account account;
+					if (accountType.equals("Savings")) {
+						account = new SavingsAccount(label, client);
+					} else {
+						account = new CurrentAccount(label, client);
+					}
+
+					// Set additional attributes
+					account.setAccountNumber(accountNumber);
+
+					// Add account to the list
+					accounts.add(account);
+				}
+			}
+		} catch (IOException | ParserConfigurationException | SAXException e) {
+			e.printStackTrace();
+		}
+
+		return accounts;
+	}
 }
