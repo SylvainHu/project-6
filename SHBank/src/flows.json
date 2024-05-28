@@ -1,0 +1,27 @@
+[
+    {
+        "type": "Debit",
+        "comment": "Debit of 50€",
+        "amount": 50,
+        "targetAccountNumber": 1,
+        "effect": true,
+        "dateOfFlow": "2023-06-01"
+    },
+    {
+        "type": "Credit",
+        "comment": "Credit of 100.50€",
+        "amount": 100.50,
+        "targetAccountNumber": 2,
+        "effect": true,
+        "dateOfFlow": "2023-06-01"
+    },
+    {
+        "type": "Transfert",
+        "comment": "Transfer of 50€",
+        "amount": 50,
+        "targetAccountNumber": 2,
+        "effect": true,
+        "dateOfFlow": "2023-06-01",
+        "issuingAccountNumber": 1
+    }
+]

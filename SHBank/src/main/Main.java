@@ -6,6 +6,10 @@
 
 package main;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -13,6 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import components.Account;
 import components.Client;
@@ -36,10 +45,12 @@ public class Main {
 		Hashtable<Integer, Account> accountTable = createAccountTable(accounts);
 		displayAccountTable(accountTable);
 
-		List<Flow> flows = loadFlows(accounts);
+//		List<Flow> flows = loadFlows(accounts);
+
+		List<Flow> flows = loadFlowsFromJson("src/flows.json");
+
 		updateBalances(flows, accountTable);
 		displayAccountTable(accountTable);
-
 	}
 
 	public static List<Client> generateClients(int numberOfClients) {
@@ -98,7 +109,7 @@ public class Main {
 		System.out.println(tableDetails + "\n");
 	}
 
-//	1.3.4 Creation of the flow array
+	// 1.3.4 Creation of the flow array
 	public static List<Flow> loadFlows(List<Account> accounts) {
 		List<Flow> flows = new ArrayList<>();
 
@@ -139,4 +150,43 @@ public class Main {
 				.filter(account -> account.getBalance() < 0).findAny();
 		negativeBalanceAccount.ifPresent(account -> System.out.println("Account with negative balance: " + account));
 	}
+
+	// 2.1 JSON file of flows
+	public static List<Flow> loadFlowsFromJson(String filePath) {
+		List<Flow> flows = new ArrayList<>();
+		JSONParser parser = new JSONParser();
+		Path path = Paths.get(filePath);
+		try (FileReader reader = new FileReader(path.toFile())) {
+			Object obj = parser.parse(reader);
+			JSONArray jsonArray = (JSONArray) obj;
+
+			for (Object o : jsonArray) {
+				JSONObject flowObject = (JSONObject) o;
+				String type = (String) flowObject.get("type");
+				String comment = (String) flowObject.get("comment");
+				double amount = ((Number) flowObject.get("amount")).doubleValue();
+				int targetAccountNumber = ((Number) flowObject.get("targetAccountNumber")).intValue();
+				boolean effect = (Boolean) flowObject.get("effect");
+				LocalDate dateOfFlow = LocalDate.parse((String) flowObject.get("dateOfFlow"));
+
+				switch (type) {
+				case "Debit":
+					flows.add(new Debit(comment, amount, targetAccountNumber, effect, dateOfFlow));
+					break;
+				case "Credit":
+					flows.add(new Credit(comment, amount, targetAccountNumber, effect, dateOfFlow));
+					break;
+				case "Transfert":
+					int issuingAccountNumber = ((Number) flowObject.get("issuingAccountNumber")).intValue();
+					flows.add(new Transfert(comment, amount, targetAccountNumber, effect, dateOfFlow,
+							issuingAccountNumber));
+					break;
+				}
+			}
+		} catch (IOException | ParseException e) {
+			e.printStackTrace();
+		}
+		return flows;
+	}
+
 }
